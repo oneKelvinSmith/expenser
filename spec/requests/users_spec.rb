@@ -14,7 +14,7 @@ RSpec.describe '/users', type: :request do
 
       new_user = User.find_by email: email
 
-      data = json['data']
+      data = body['data']
       expect(data['provider']).to eq 'email'
       expect(data['uid']).to eq email
       expect(data['id']).to eq new_user.id
@@ -31,7 +31,8 @@ RSpec.describe '/users', type: :request do
                      password: password,
                      password_confirmation: password
 
-      expect(response.status).to be 403
+      expect(response).to have_http_status :forbidden
+      expect(User.count).to be 1
     end
   end
 
@@ -44,16 +45,34 @@ RSpec.describe '/users', type: :request do
 
       post '/users/sign_in', email: email, password: password
 
-      expect(response).to be_success
+      expect(response).to have_http_status :ok
 
-      data = json['data']
+      data = body['data']
       expect(data['provider']).to eq 'email'
       expect(data['uid']).to eq email
       expect(data['id']).to eq user.id
       expect(data['email']).to eq user.email
     end
 
-    it 'does not authentcate user with an incorrect password' do
+    it 'provides a authentication token to the client on successful sign in' do
+      email = 'test@example.com'
+      password = 'super_secure'
+
+      user = User.create email: email, password: password
+
+      post '/users/sign_in', email: email, password: password
+
+      user.reload
+      client_token = user.tokens.keys.last
+      expiry = user.tokens.values.last['expiry'].to_s
+
+      expect(header['token-type']).to eq 'Bearer'
+      expect(header['uid']).to eq user.uid
+      expect(header['expiry']).to eq expiry
+      expect(header['client']).to eq client_token
+    end
+
+    it 'does not authenticate user with an incorrect password' do
       email = 'test@example.com'
       password = 'super_secure'
 
@@ -61,17 +80,26 @@ RSpec.describe '/users', type: :request do
 
       post '/users/sign_in', email: email, password: 'INCORRECT_PASSWORD'
 
-      expect(response.status).to be 401
+      expect(response).to have_http_status :unauthorized
     end
 
     it 'does not authenticate users that have not registered' do
       post '/users/sign_in', email: 'test@example.com', password: 'irrelevant'
 
-      expect(response.status).to be 401
+      expect(response).to have_http_status :unauthorized
     end
 
     it 'allows users to sign out' do
+      user = User.create email: 'test@example.com', password: 'password'
+      auth_headers = user.create_new_auth_token
+      client_token = auth_headers['client']
 
+      delete '/users/sign_out', {}, auth_headers
+
+      user.reload
+
+      expect(response).to have_http_status :ok
+      expect(user.tokens[client_token]).not_to be_present
     end
   end
 end
