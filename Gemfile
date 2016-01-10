@@ -20,12 +20,13 @@ group :development do
 end
 
 group :development, :test do
+  gem 'rubocop', '~> 0.35.1'
   gem 'foreman', '~> 0.78.0'
   gem 'pry', '~> 0.10.3'
   gem 'rspec-rails', '~> 3.4.0'
   gem 'simplecov', '>= 0.10.0', require: false
 end
 
-# group :production do
-#   gem 'rails_12factor', '~> 0.3.0'
-# end
+group :production do
+  gem 'rails_12factor', '~> 0.0.3'
+end
