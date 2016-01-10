@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
-  mount_devise_token_auth_for 'User', at: 'users', skip: [:omniauth_callbacks]
+  namespace :api do
+    scope :v1 do
+      mount_devise_token_auth_for 'User',
+                                  at: 'auth',
+                                  skip: [:omniauth_callbacks]
+    end
+  end
   mount_ember_app :frontend, to: '/'
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -1,14 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe '/users', type: :request do
+RSpec.describe '/api/v1/auth', type: :request do
   context 'registration' do
-    it 'allows users to sign up via the api' do
+    it 'allows api/v1/auth to sign up via the api' do
       email = 'test@example.com'
       password = 'super_secure'
 
-      post '/users', email: email,
-                     password: password,
-                     password_confirmation: password
+      post '/api/v1/auth', email: email,
+                           password: password,
+                           password_confirmation: password
 
       expect(response).to be_success
 
@@ -27,9 +27,9 @@ RSpec.describe '/users', type: :request do
 
       User.create email: email, password: password
 
-      post '/users', email: email,
-                     password: password,
-                     password_confirmation: password
+      post '/api/v1/auth', email: email,
+                           password: password,
+                           password_confirmation: password
 
       expect(response).to have_http_status :forbidden
       expect(User.count).to be 1
@@ -37,13 +37,13 @@ RSpec.describe '/users', type: :request do
   end
 
   context 'authentication' do
-    it 'allows users to sign in via the api' do
+    it 'allows api/v1/auth to sign in via the api' do
       email = 'test@example.com'
       password = 'super_secure'
 
       user = User.create email: email, password: password
 
-      post '/users/sign_in', email: email, password: password
+      post '/api/v1/auth/sign_in', email: email, password: password
 
       expect(response).to have_http_status :ok
 
@@ -60,7 +60,7 @@ RSpec.describe '/users', type: :request do
 
       user = User.create email: email, password: password
 
-      post '/users/sign_in', email: email, password: password
+      post '/api/v1/auth/sign_in', email: email, password: password
 
       user.reload
       client_token = user.tokens.keys.last
@@ -78,23 +78,24 @@ RSpec.describe '/users', type: :request do
 
       User.create email: email, password: password
 
-      post '/users/sign_in', email: email, password: 'INCORRECT_PASSWORD'
+      post '/api/v1/auth/sign_in', email: email, password: 'INCORRECT_PASSWORD'
 
       expect(response).to have_http_status :unauthorized
     end
 
-    it 'does not authenticate users that have not registered' do
-      post '/users/sign_in', email: 'test@example.com', password: 'irrelevant'
+    it 'does not authenticate a user who has not registered' do
+      post '/api/v1/auth/sign_in', email: 'test@example.com',
+                                   password: 'irrelevant'
 
       expect(response).to have_http_status :unauthorized
     end
 
-    it 'allows users to sign out' do
+    it 'allows a user to sign out' do
       user = User.create email: 'test@example.com', password: 'password'
       auth_headers = user.create_new_auth_token
       client_token = auth_headers['client']
 
-      delete '/users/sign_out', {}, auth_headers
+      delete '/api/v1/auth/sign_out', {}, auth_headers
 
       user.reload
 
