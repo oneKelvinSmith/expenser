@@ -23,8 +23,13 @@ group :development, :test do
   gem 'rubocop', '~> 0.35.1'
   gem 'foreman', '~> 0.78.0'
   gem 'pry', '~> 0.10.3'
-  gem 'rspec-rails', '~> 3.4.0'
   gem 'simplecov', '>= 0.10.0', require: false
+end
+
+group :test do
+  gem 'rspec-rails', '~> 3.4.0'
+  gem 'capybara', '~> 2.5.0'
+  gem 'capybara-webkit', '~> 1.7.1'
 end
 
 group :production do
