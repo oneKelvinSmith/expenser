@@ -1,11 +1,21 @@
 /* jshint node: true */
+/* eslint no-var: 0 */
+/* global module */
 
 module.exports = function(environment) {
   var ENV = {
     modulePrefix: 'frontend',
     environment: environment,
     baseURL: '/',
+    apiURL: '/api/v1',
     locationType: 'auto',
+
+    'ember-simple-auth': {
+      authenticationRoute: 'login',
+      routeAfterAuthentication: 'index',
+      routeIfAlreadyAuthenticated: 'index'
+    },
+
     EmberENV: {
       FEATURES: {
         // Here you can enable experimental features on an ember canary build
@@ -40,7 +50,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-
+    // Here you can enable production configuration
   }
 
   return ENV;

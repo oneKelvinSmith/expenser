@@ -5,7 +5,6 @@ gem 'rails', '4.2.5'
 gem 'rails-api', '~> 0.4.0'
 gem 'active_model_serializers', '~> 0.9.4'
 gem 'devise_token_auth', '~> 0.1.36'
-gem 'rack-cors', '~> 0.4.0'
 
 gem 'ember-cli-rails', '~> 0.7.0'
 
@@ -30,6 +29,7 @@ group :test do
   gem 'rspec-rails', '~> 3.4.0'
   gem 'capybara', '~> 2.5.0'
   gem 'capybara-webkit', '~> 1.7.1'
+  gem 'database_cleaner', '~> 1.5.1'
 end
 
 group :production do

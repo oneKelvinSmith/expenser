@@ -3,7 +3,7 @@
   "parser": "babel-eslint",
   "rules": {
     "arrow-spacing": [2, { "before": true, "after": true }],
-    "max-len": [2, 80, 2, {"ignoreComments": true}],
+    "max-len": [2, 100, 2, {"ignoreComments": true}],
     "no-restricted-syntax": [2, "WithStatement"],
     "no-var": 2,
     "object-curly-spacing": [2, "always"],
