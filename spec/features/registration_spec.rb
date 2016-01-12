@@ -5,9 +5,6 @@ RSpec.feature 'Registrations', js: true do
     visit '/'
 
     expect(page).to have_link 'Sign up'
-    expect(page).to have_link 'Log in'
-
-    expect(page).not_to have_button 'Log out'
 
     click_link 'Sign up'
 
@@ -22,10 +19,7 @@ RSpec.feature 'Registrations', js: true do
     # expect(page).to have_content 'new_user@example.com'
     # expect(page).to have_content 'Timekeeping'
 
-    expect(page).to have_button 'Log out'
-
     expect(page).not_to have_link 'Sign up'
-    expect(page).not_to have_link 'Log in'
   end
 
   scenario 'signing up with invalid details' do
