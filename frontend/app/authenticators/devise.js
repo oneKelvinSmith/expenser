@@ -28,19 +28,21 @@ export default DeviseAuthenticator.extend({
 
       data[identificationAttributeName] = identification;
 
-      this.makeRequest(data).then((response, status, xhr) => {
-        const result = {
-          accessToken: xhr.getResponseHeader('access-token'),
-          expiry: xhr.getResponseHeader('expiry'),
-          tokenType: xhr.getResponseHeader('token-type'),
-          uid: xhr.getResponseHeader('uid'),
-          client: xhr.getResponseHeader('client')
-        };
+      this
+        .makeRequest(data)
+        .then((response, status, xhr) => {
+          const result = {
+            accessToken: xhr.getResponseHeader('access-token'),
+            expiry: xhr.getResponseHeader('expiry'),
+            tokenType: xhr.getResponseHeader('token-type'),
+            uid: xhr.getResponseHeader('uid'),
+            client: xhr.getResponseHeader('client')
+          };
 
-        run(null, resolve, result);
-      }, xhr => {
-        run(null, reject, xhr.responseJSON || xhr.responseText);
-      });
+          run(null, resolve, result);
+        }, xhr => {
+          run(null, reject, xhr.responseJSON || xhr.responseText);
+        });
     });
   }
 });

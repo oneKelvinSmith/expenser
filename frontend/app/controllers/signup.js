@@ -7,23 +7,29 @@ export default Ember.Controller.extend({
   session: Ember.inject.service('session'),
 
   actions: {
-    register: function() {
+    register: function register() {
       const { email, password } = this.getProperties('email', 'password');
+
       const data = {
         email: email,
         password: password,
         password_confirmation: this.get('confirmation')
       };
 
+      const success = () => {
+        this
+          .get('session')
+          .authenticate('authenticator:devise', email, password);
+      };
+
+      const failure = ({ responseJSON }) => {
+        this
+          .set('errors', responseJSON.errors.full_messages);
+      };
+
       Ember.$
         .post(ENV.apiURL + '/users', data, 'json')
-        .then(() => {
-          this
-            .get('session')
-            .authenticate('authenticator:devise', email, password);
-        }, ({ responseJSON }) => {
-          // console.log(responseJSON);
-        });
+        .then(success, failure);
     }
   }
 });
