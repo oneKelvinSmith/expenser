@@ -17,7 +17,6 @@ RSpec.feature 'Registrations', js: true do
     expect(page).not_to have_text 'Sign up'
 
     # expect(page).to have_content 'new_user@example.com'
-    # expect(page).to have_content 'Timekeeping'
 
     expect(page).not_to have_link 'Sign up'
   end
