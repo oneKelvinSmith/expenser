@@ -5,7 +5,7 @@ import ENV from '../config/environment';
 const { RSVP, isEmpty, run } = Ember;
 
 export default DeviseAuthenticator.extend({
-  serverTokenEndpoint: ENV.apiURL + '/users/sign_in',
+  serverTokenEndpoint: ENV.apiURL + '/auth/sign_in',
 
   restore(data) {
     return new RSVP.Promise((resolve, reject) => {

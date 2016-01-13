@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
       };
 
       Ember.$
-        .post(ENV.apiURL + '/users', data, 'json')
+        .post(ENV.apiURL + '/auth', data, 'json')
         .then(success, failure);
     }
   }
