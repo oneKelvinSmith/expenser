@@ -7,8 +7,8 @@ RSpec.describe '/api/v1/auth', type: :request do
       password = 'super_secure'
 
       post '/api/v1/auth', email: email,
-                            password: password,
-                            password_confirmation: password
+                           password: password,
+                           password_confirmation: password
 
       expect(response).to be_success
 
@@ -28,8 +28,8 @@ RSpec.describe '/api/v1/auth', type: :request do
       User.create email: email, password: password
 
       post '/api/v1/auth', email: email,
-                            password: password,
-                            password_confirmation: password
+                           password: password,
+                           password_confirmation: password
 
       expect(response).to have_http_status :forbidden
       expect(User.count).to be 1
@@ -85,7 +85,7 @@ RSpec.describe '/api/v1/auth', type: :request do
 
     it 'does not authenticate a user who has not registered' do
       post '/api/v1/auth/sign_in', email: 'test@example.com',
-                                    password: 'irrelevant'
+                                   password: 'irrelevant'
 
       expect(response).to have_http_status :unauthorized
     end
