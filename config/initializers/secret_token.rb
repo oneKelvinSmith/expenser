@@ -10,10 +10,10 @@
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
 
-# Although this is not needed for an api-only application, rails4 
-# requires secret_key_base or secret_token to be defined, otherwise an 
+# Although this is not needed for an api-only application, rails4
+# requires secret_key_base or secret_token to be defined, otherwise an
 # error is raised.
 # Using secret_token for rails3 compatibility. Change to secret_key_base
 # to avoid deprecation warning.
 # Can be safely removed in a rails3 api-only application.
-Timekeeper::Application.config.secret_token = 'b08aecdfd9e249c9dfe8982bca4eadb1d3d03bbf10d7d311962feb1cb753c94d58e6983bcf283f5b246ae801e99131b4540f0886d14dfc513bce6b2a2a8e7f11'
+Expenser::Application.config.secret_token = 'b08aecdfd9e249c9dfe8982bca4eadb1d3d03bbf10d7d311962feb1cb753c94d58e6983bcf283f5b246ae801e99131b4540f0886d14dfc513bce6b2a2a8e7f11'
