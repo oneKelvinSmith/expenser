@@ -2,6 +2,8 @@ module Api
   module V1
     module Admin
       class UsersController < Api::V1::BaseController
+        before_action :set_user, only: [:show, :update, :destroy]
+
         # GET /api/v1/admin/users
         # GET /api/v1/admin/users.json
         def index
@@ -13,16 +15,12 @@ module Api
         # GET /api/v1/admin/users/1
         # GET /api/v1/admin/users/1.json
         def show
-          @user = User.find params[:id]
-
           render json: @user
         end
 
         # PATCH/PUT /api/v1/admin/users/1
         # PATCH/PUT /api/v1/admin/users/1.json
         def update
-          @user = User.find params[:id]
-
           if @user.update(user_params)
             head :no_content
           else
@@ -30,7 +28,19 @@ module Api
           end
         end
 
+        # DELETE /api/v1/admin/users/1
+        # DELETE /api/v1/admin/users/1.json
+        def destroy
+          @user.destroy
+
+          head :no_content
+        end
+
         private
+
+        def set_user
+          @user = User.find(params[:id])
+        end
 
         def user_params
           params.require(:user).permit(:email, :name)

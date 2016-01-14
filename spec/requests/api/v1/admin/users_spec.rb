@@ -34,7 +34,7 @@ RSpec.describe '/api/v1/admin/users' do
     end
   end
 
-  describe 'PUT /users/1 ' do
+  describe 'PATCH/PUT /users/1 ' do
     it 'updates the specified user' do
       dudette = User.create email: 'dudette@example.com', password: 'password'
 
@@ -82,6 +82,39 @@ RSpec.describe '/api/v1/admin/users' do
       put "/api/v1/admin/users/#{dudette.id}", user: { name: 'BADNESS' }
 
       expect(body['name']).to eq ['Badness has occurred']
+    end
+
+    it 'returns raises and error if the record isnot found' do
+      expect do
+        put '/api/v1/admin/users/42', user: {}
+      end.to raise_error ActiveRecord::RecordNotFound
+    end
+  end
+
+  describe 'DELETE /users/1' do
+    it 'deletes the specified user' do
+      dude = User.create email: 'dude@example.com', password: 'password'
+
+      delete "/api/v1/admin/users/#{dude.id}"
+
+      expect do
+        User.find dude.id
+      end.to raise_error ActiveRecord::RecordNotFound
+    end
+
+    it 'responds with :no_content on successful delete' do
+      dude = User.create email: 'dudette@example.com', password: 'password'
+
+      delete "/api/v1/admin/users/#{dude.id}"
+
+      expect(header['Content-Type']).not_to be_present
+      expect(response).to have_http_status :no_content
+    end
+
+    it 'returns raises and error if the record isnot found' do
+      expect do
+        delete '/api/v1/admin/users/42'
+      end.to raise_error ActiveRecord::RecordNotFound
     end
   end
 
