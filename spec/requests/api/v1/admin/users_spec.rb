@@ -34,6 +34,88 @@ RSpec.describe '/api/v1/admin/users' do
     end
   end
 
+  describe 'POST /users' do
+    it 'creates a new user' do
+      user_params = {
+        email: 'new_user@example.com',
+        name: 'New User',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      post '/api/v1/admin/users', user: user_params
+
+      new_user = User.find_by email: user_params[:email]
+
+      expect(new_user.name).to eq user_params[:name]
+    end
+
+    it 'returns the created user' do
+      user_params = {
+        email: 'new_user@example.com',
+        name: 'New User',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      post '/api/v1/admin/users', user: user_params
+
+      new_user = User.find_by email: user_params[:email]
+
+      expect(body).to eq json_for(new_user)
+    end
+
+    it 'responds with :created on successful create' do
+      user_params = {
+        email: 'new_user@example.com',
+        name: 'New User',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      post '/api/v1/admin/users', user: user_params
+
+      expect(response).to have_http_status :created
+    end
+
+    it 'responds with :unprocessable_entity when create fails' do
+      user_params = {
+        email: 'new_user@example.com',
+        name: 'New User',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      new_user = User.new user_params
+
+      allow(User).to receive(:new).and_return new_user
+      allow(new_user).to receive(:save).and_return false
+
+      post '/api/v1/admin/users', user: user_params
+
+      expect(response).to have_http_status :unprocessable_entity
+    end
+
+    it 'renders errors when update fails' do
+      user_params = {
+        email: 'new_user@example.com',
+        name: 'New User',
+        password: 'password',
+        password_confirmation: 'password'
+      }
+
+      new_user = User.new user_params
+      new_user.errors.add('email', 'Email has been taken')
+
+      allow(User).to receive(:new).and_return new_user
+      allow(new_user).to receive(:save).and_return false
+
+      post '/api/v1/admin/users', user: user_params
+
+      expect(body['email']).to eq ['Email has been taken']
+    end
+  end
+
   describe 'PATCH/PUT /users/1 ' do
     it 'updates the specified user' do
       dudette = User.create email: 'dudette@example.com', password: 'password'
@@ -120,10 +202,10 @@ RSpec.describe '/api/v1/admin/users' do
 
   def json_for(user)
     {
-      'provider' => 'email',
-      'id'       => user.id, 'uid'      => user.email,
-      'name'     => nil,     'nickname' => nil,
-      'image'    => nil,     'email'    => user.email,
+      'id'       => user.id,
+      'provider' => 'email',    'uid'      => user.email,
+      'name'     => user.name,  'nickname' => user.nickname,
+      'image'    => user.image, 'email'    => user.email,
       'created_at' => user.created_at.as_json,
       'updated_at' => user.updated_at.as_json
     }

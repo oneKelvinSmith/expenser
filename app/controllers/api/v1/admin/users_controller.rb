@@ -18,6 +18,18 @@ module Api
           render json: @user
         end
 
+        # POST /api/v1/admin/users
+        # POST /api/v1/admin/users.json
+        def create
+          @user = User.new(create_params)
+
+          if @user.save
+            render json: @user, status: :created
+          else
+            render json: @user.errors, status: :unprocessable_entity
+          end
+        end
+
         # PATCH/PUT /api/v1/admin/users/1
         # PATCH/PUT /api/v1/admin/users/1.json
         def update
@@ -44,6 +56,12 @@ module Api
 
         def user_params
           params.require(:user).permit(:email, :name)
+        end
+
+        def create_params
+          params
+            .require(:user)
+            .permit(:email, :name, :password, :password_confirmation)
         end
       end
     end
