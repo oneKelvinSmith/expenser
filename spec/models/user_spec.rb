@@ -25,10 +25,32 @@ RSpec.describe User do
       end
     end
 
+    describe '#user!' do
+      it 'sets the :user role' do
+        params = { email: 'user@example.com', password: 'password', role: 1 }
+        user = User.create(params)
+
+        user.user!
+
+        expect(user).to be_user
+      end
+    end
+
     describe '#admin?' do
       it 'is true when :user role is set' do
         expect(User.new(role: 1)).to be_admin
         expect(User.new(role: 0)).not_to be_admin
+      end
+    end
+
+    describe '#admin!' do
+      it 'sets the :admin role' do
+        params = { email: 'admin@example.com', password: 'password' }
+        user = User.create(params)
+
+        user.admin!
+
+        expect(user).to be_admin
       end
     end
   end
