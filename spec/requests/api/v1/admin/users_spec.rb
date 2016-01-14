@@ -22,19 +22,26 @@ RSpec.describe '/api/v1/admin/users' do
 
       get "/api/v1/admin/users/#{dudette.id}"
 
+      expect(response).to have_http_status :ok
+
       expect(body).to eq json_for(dudette)
+    end
+
+    it 'returns raises and error if the record isnot found' do
+      expect do
+        get '/api/v1/admin/users/42'
+      end.to raise_error ActiveRecord::RecordNotFound
     end
   end
 
+  describe ''
+
   def json_for(user)
     {
-      'id' => user.id,
       'provider' => 'email',
-      'uid' => user.email,
-      'name' => nil,
-      'nickname' => nil,
-      'image' => nil,
-      'email' => user.email,
+      'id'       => user.id, 'uid'      => user.email,
+      'name'     => nil,     'nickname' => nil,
+      'image'    => nil,     'email'    => user.email,
       'created_at' => user.created_at.as_json,
       'updated_at' => user.updated_at.as_json
     }
