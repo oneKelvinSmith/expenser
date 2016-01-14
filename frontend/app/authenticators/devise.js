@@ -1,11 +1,11 @@
 import DeviseAuthenticator from 'ember-simple-auth/authenticators/devise';
 import Ember from 'ember';
-import ENV from '../config/environment';
+import config from '../config/environment';
 
 const { RSVP, isEmpty } = Ember;
 
 export default DeviseAuthenticator.extend({
-  serverTokenEndpoint: ENV.apiURL + '/auth/sign_in',
+  serverTokenEndpoint: config.apiURL + '/auth/sign_in',
 
   restore(data) {
     return new RSVP.Promise((resolve, reject) => {
@@ -34,7 +34,7 @@ export default DeviseAuthenticator.extend({
           expiry: xhr.getResponseHeader('expiry'),
           tokenType: xhr.getResponseHeader('token-type'),
           uid: xhr.getResponseHeader('uid'),
-          client: xhr.getResponseHeader('client'),
+          client: xhr.getResponseHeader('client')
         });
       };
 

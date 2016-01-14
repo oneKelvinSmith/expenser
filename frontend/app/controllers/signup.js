@@ -1,7 +1,7 @@
 /* eslint camelcase:0 */
 
 import Ember from 'ember';
-import ENV from '../config/environment';
+import config from '../config/environment';
 
 export default Ember.Controller.extend({
   session: Ember.inject.service('session'),
@@ -28,7 +28,7 @@ export default Ember.Controller.extend({
       };
 
       Ember.$
-        .post(ENV.apiURL + '/auth', data, 'json')
+        .post(config.apiURL + '/auth', data, 'json')
         .then(success, failure);
     }
   }
