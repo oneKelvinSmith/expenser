@@ -2,7 +2,7 @@ import DeviseAuthenticator from 'ember-simple-auth/authenticators/devise';
 import Ember from 'ember';
 import ENV from '../config/environment';
 
-const { RSVP, isEmpty, run } = Ember;
+const { RSVP, isEmpty } = Ember;
 
 export default DeviseAuthenticator.extend({
   serverTokenEndpoint: ENV.apiURL + '/auth/sign_in',
@@ -23,26 +23,26 @@ export default DeviseAuthenticator.extend({
 
   authenticate(identification, password) {
     return new RSVP.Promise((resolve, reject) => {
-      const data = { password };
+      const credentials = { password };
       const identificationAttributeName = this.get('identificationAttributeName');
 
-      data[identificationAttributeName] = identification;
+      credentials[identificationAttributeName] = identification;
+
+      const success = (_response, _status, xhr) => {
+        resolve({
+          accessToken: xhr.getResponseHeader('access-token'),
+          expiry: xhr.getResponseHeader('expiry'),
+          tokenType: xhr.getResponseHeader('token-type'),
+          uid: xhr.getResponseHeader('uid'),
+          client: xhr.getResponseHeader('client'),
+        });
+      };
+
+      const failure = ({ responseJSON }) => reject(responseJSON);
 
       this
-        .makeRequest(data)
-        .then((response, status, xhr) => {
-          const result = {
-            accessToken: xhr.getResponseHeader('access-token'),
-            expiry: xhr.getResponseHeader('expiry'),
-            tokenType: xhr.getResponseHeader('token-type'),
-            uid: xhr.getResponseHeader('uid'),
-            client: xhr.getResponseHeader('client')
-          };
-
-          run(null, resolve, result);
-        }, xhr => {
-          run(null, reject, xhr.responseJSON || xhr.responseText);
-        });
+        .makeRequest(credentials)
+        .then(success, failure);
     });
   }
 });

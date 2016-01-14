@@ -14,6 +14,7 @@
     <div class="collapse navbar-collapse" id="menu-collapse">
       <ul class="nav navbar-nav navbar-right">
         {{#if session.isAuthenticated}}
+          <li>{{#link-to 'index'}}{{session.currentUser}}{{/link-to}}</li>
           <li><button class="btn btn-link" {{action 'logout'}}>Log out</button></li>
         {{else}}
           <li>{{#link-to 'signup'}}Sign up{{/link-to}}</li>
