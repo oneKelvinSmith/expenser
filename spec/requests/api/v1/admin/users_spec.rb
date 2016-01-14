@@ -203,9 +203,10 @@ RSpec.describe '/api/v1/admin/users' do
   def json_for(user)
     {
       'id'       => user.id,
-      'provider' => 'email',    'uid'      => user.email,
-      'name'     => user.name,  'nickname' => user.nickname,
-      'image'    => user.image, 'email'    => user.email,
+      'provider' => 'email',
+      'uid'      => user.email,
+      'name'     => user.name,
+      'email'    => user.email,
       'created_at' => user.created_at.as_json,
       'updated_at' => user.updated_at.as_json
     }
