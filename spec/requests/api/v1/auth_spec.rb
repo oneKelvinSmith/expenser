@@ -3,33 +3,37 @@ require 'rails_helper'
 RSpec.describe '/api/v1/auth', type: :request do
   context 'registration' do
     it 'allows api/v1/auth to sign up via the api' do
-      email = 'test@example.com'
-      password = 'super_secure'
+      params = {
+        name: 'New Registration',
+        email: 'new_registration@example.com',
+        password: 'password',
+        password_confirmation: 'password'
+      }
 
-      post '/api/v1/auth', email: email,
-                           password: password,
-                           password_confirmation: password
+      post '/api/v1/auth', params
 
       expect(response).to be_success
 
-      new_user = User.find_by email: email
+      new_user = User.find_by email: params[:email]
 
       data = body['data']
       expect(data['provider']).to eq 'email'
-      expect(data['uid']).to eq email
+      expect(data['uid']).to eq new_user.email
       expect(data['id']).to eq new_user.id
       expect(data['email']).to eq new_user.email
     end
 
     it 'does not allow duplicate registrations' do
-      email = 'test@example.com'
-      password = 'super_secure'
+      params = {
+        name: 'New Registration',
+        email: 'new_registration@example.com',
+        password: 'password',
+        password_confirmation: 'password'
+      }
 
-      User.create email: email, password: password
+      User.create params
 
-      post '/api/v1/auth', email: email,
-                           password: password,
-                           password_confirmation: password
+      post '/api/v1/auth', params
 
       expect(response).to have_http_status :forbidden
       expect(User.count).to be 1
@@ -38,8 +42,8 @@ RSpec.describe '/api/v1/auth', type: :request do
 
   context 'authentication' do
     it 'allows api/v1/auth to sign in via the api' do
-      email = 'test@example.com'
-      password = 'super_secure'
+      email = 'new_user@example.com'
+      password = 'password'
 
       user = User.create email: email, password: password
 
@@ -55,9 +59,8 @@ RSpec.describe '/api/v1/auth', type: :request do
     end
 
     it 'provides a authentication token to the client on successful sign in' do
-      email = 'test@example.com'
-      password = 'super_secure'
-
+      email = 'new_user@example.com'
+      password = 'password'
       user = User.create email: email, password: password
 
       post '/api/v1/auth/sign_in', email: email, password: password
@@ -73,8 +76,8 @@ RSpec.describe '/api/v1/auth', type: :request do
     end
 
     it 'does not authenticate user with an incorrect password' do
-      email = 'test@example.com'
-      password = 'super_secure'
+      email = 'new_user@example.com'
+      password = 'password'
 
       User.create email: email, password: password
 
@@ -84,14 +87,20 @@ RSpec.describe '/api/v1/auth', type: :request do
     end
 
     it 'does not authenticate a user who has not registered' do
-      post '/api/v1/auth/sign_in', email: 'test@example.com',
-                                   password: 'irrelevant'
+      email = 'unregistered@example.com'
+      password = 'irrelevant'
+
+      post '/api/v1/auth/sign_in', email: email, password: password
 
       expect(response).to have_http_status :unauthorized
     end
 
     it 'allows a user to sign out' do
-      user = User.create email: 'test@example.com', password: 'password'
+      email = 'new_user@example.com'
+      password = 'password'
+
+      user = User.create email: email, password: password
+
       auth_headers = user.create_new_auth_token
       client_token = auth_headers['client']
 
