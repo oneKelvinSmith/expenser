@@ -8,7 +8,6 @@ RSpec.feature 'Registrations', js: true do
 
     click_link 'Sign up'
 
-    fill_in 'Name',             with: 'New User'
     fill_in 'Email',            with: 'new_user@example.com'
     fill_in 'Password',         with: 'password'
     fill_in 'Confirm password', with: 'password'

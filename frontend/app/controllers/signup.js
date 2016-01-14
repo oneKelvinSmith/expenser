@@ -8,15 +8,12 @@ export default Ember.Controller.extend({
 
   actions: {
     register: function register() {
-      const {
-        name, email, password, confirmation
-      } = this.getProperties('name', 'email', 'password', 'confirmation');
+      const { email, password } = this.getProperties('email', 'password');
 
       const data = {
-        name: name,
         email: email,
         password: password,
-        password_confirmation: confirmation
+        password_confirmation: this.get('confirmation')
       };
 
       const success = () => {
@@ -25,9 +22,7 @@ export default Ember.Controller.extend({
           .authenticate('authenticator:devise', email, password);
       };
 
-      const failure = ({
-        responseJSON
-      }) => {
+      const failure = ({ responseJSON }) => {
         this
           .set('errors', responseJSON.errors.full_messages);
       };

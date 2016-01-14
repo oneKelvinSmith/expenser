@@ -4,7 +4,6 @@ RSpec.describe '/api/v1/auth', type: :request do
   context 'registration' do
     it 'allows api/v1/auth to sign up via the api' do
       params = {
-        name: 'New Registration',
         email: 'new_registration@example.com',
         password: 'password',
         password_confirmation: 'password'
@@ -25,7 +24,6 @@ RSpec.describe '/api/v1/auth', type: :request do
 
     it 'does not allow duplicate registrations' do
       params = {
-        name: 'New Registration',
         email: 'new_registration@example.com',
         password: 'password',
         password_confirmation: 'password'
