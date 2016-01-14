@@ -14,7 +14,10 @@ module Api
       end
 
       def authenticate_admin!
-        authenticate_user! && current_user.admin?
+        return if current_user.try(:admin?)
+        render json: {
+          errors: ['Authorized users only.']
+        }, status: :unauthorized
       end
     end
   end

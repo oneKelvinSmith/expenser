@@ -2,7 +2,7 @@ module Api
   module V1
     module Admin
       class UsersController < Api::V1::BaseController
-        before_action :authenticate_user!
+        before_action :authenticate_admin!
         before_action :set_user, only: [:show, :update, :destroy]
 
         # GET /api/v1/admin/users

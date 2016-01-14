@@ -8,6 +8,7 @@ RSpec.describe '/api/v1/admin/users' do
       'uid'      => user.email,
       'name'     => user.name,
       'email'    => user.email,
+      'role'     => user.role,
       'created_at' => user.created_at.as_json,
       'updated_at' => user.updated_at.as_json
     }
@@ -21,8 +22,9 @@ RSpec.describe '/api/v1/admin/users' do
         expect(response).to have_http_status :unauthorized
       end
 
-      xit 'responds with :unauthorized when user is not an admin' do
+      it 'responds with :unauthorized when user is not an admin' do
         user = User.create email: 'user@example.com', password: 'password'
+        user.user!
 
         auth_headers = user.create_new_auth_token
 
@@ -31,11 +33,87 @@ RSpec.describe '/api/v1/admin/users' do
         expect(response).to have_http_status :unauthorized
       end
     end
+
+    describe 'GET /users/1' do
+      it 'responds with :unauthorized when user is not signed in' do
+        get '/api/v1/admin/users/1'
+
+        expect(response).to have_http_status :unauthorized
+      end
+
+      it 'responds with :unauthorized when user is not an admin' do
+        user = User.create email: 'user@example.com', password: 'password'
+        user.user!
+
+        auth_headers = user.create_new_auth_token
+
+        get '/api/v1/admin/users/1', {}, auth_headers
+
+        expect(response).to have_http_status :unauthorized
+      end
+    end
+
+    describe 'POST /users' do
+      it 'responds with :unauthorized when user is not signed in' do
+        post '/api/v1/admin/users'
+
+        expect(response).to have_http_status :unauthorized
+      end
+
+      it 'responds with :unauthorized when user is not an admin' do
+        user = User.create email: 'user@example.com', password: 'password'
+        user.user!
+
+        auth_headers = user.create_new_auth_token
+
+        post '/api/v1/admin/users', {}, auth_headers
+
+        expect(response).to have_http_status :unauthorized
+      end
+    end
+
+    describe 'PATCH/PUT /users/1' do
+      it 'responds with :unauthorized when user is not signed in' do
+        put '/api/v1/admin/users/1'
+
+        expect(response).to have_http_status :unauthorized
+      end
+
+      it 'responds with :unauthorized when user is not an admin' do
+        user = User.create email: 'user@example.com', password: 'password'
+        user.user!
+
+        auth_headers = user.create_new_auth_token
+
+        put '/api/v1/admin/users/1', {}, auth_headers
+
+        expect(response).to have_http_status :unauthorized
+      end
+    end
+
+    describe 'DELETE /users/1' do
+      it 'responds with :unauthorized when user is not signed in' do
+        delete '/api/v1/admin/users/1'
+
+        expect(response).to have_http_status :unauthorized
+      end
+
+      it 'responds with :unauthorized when user is not an admin' do
+        user = User.create email: 'user@example.com', password: 'password'
+        user.user!
+
+        auth_headers = user.create_new_auth_token
+
+        delete '/api/v1/admin/users/1', {}, auth_headers
+
+        expect(response).to have_http_status :unauthorized
+      end
+    end
   end
 
   context 'authorized administrator' do
     let!(:admin) do
-      User.create email: 'admin@example.com', password: 'password'
+      User.create email: 'admin@example.com', password: 'password', role: 1
     end
     let(:auth_headers) { admin.create_new_auth_token }
 
@@ -78,81 +156,81 @@ RSpec.describe '/api/v1/admin/users' do
 
     describe 'POST /users' do
       it 'creates a new user' do
-        user_params = {
+        params = {
           email: 'new_user@example.com',
           name: 'New User',
           password: 'password',
           password_confirmation: 'password'
         }
 
-        post '/api/v1/admin/users', { user: user_params }, auth_headers
+        post '/api/v1/admin/users', { user: params }, auth_headers
 
-        new_user = User.find_by email: user_params[:email]
+        new_user = User.find_by email: params[:email]
 
-        expect(new_user.name).to eq user_params[:name]
+        expect(new_user.name).to eq params[:name]
       end
 
       it 'returns the created user' do
-        user_params = {
+        params = {
           email: 'new_user@example.com',
           name: 'New User',
           password: 'password',
           password_confirmation: 'password'
         }
 
-        post '/api/v1/admin/users', { user: user_params }, auth_headers
+        post '/api/v1/admin/users', { user: params }, auth_headers
 
-        new_user = User.find_by email: user_params[:email]
+        new_user = User.find_by email: params[:email]
 
         expect(body).to eq json_for(new_user)
       end
 
       it 'responds with :created on successful create' do
-        user_params = {
+        params = {
           email: 'new_user@example.com',
           name: 'New User',
           password: 'password',
           password_confirmation: 'password'
         }
 
-        post '/api/v1/admin/users', { user: user_params }, auth_headers
+        post '/api/v1/admin/users', { user: params }, auth_headers
 
         expect(response).to have_http_status :created
       end
 
       it 'responds with :unprocessable_entity when create fails' do
-        user_params = {
+        params = {
           email: 'new_user@example.com',
           name: 'New User',
           password: 'password',
           password_confirmation: 'password'
         }
 
-        new_user = User.new user_params
+        new_user = User.new params
 
         allow(User).to receive(:new).and_return new_user
         allow(new_user).to receive(:save).and_return false
 
-        post '/api/v1/admin/users', { user: user_params }, auth_headers
+        post '/api/v1/admin/users', { user: params }, auth_headers
 
         expect(response).to have_http_status :unprocessable_entity
       end
 
       it 'renders errors when update fails' do
-        user_params = {
+        params = {
           email: 'new_user@example.com',
           name: 'New User',
           password: 'password',
           password_confirmation: 'password'
         }
 
-        new_user = User.new user_params
+        new_user = User.new params
         new_user.errors.add('email', 'Email has been taken')
 
         allow(User).to receive(:new).and_return new_user
         allow(new_user).to receive(:save).and_return false
 
-        post '/api/v1/admin/users', { user: user_params }, auth_headers
+        post '/api/v1/admin/users', { user: params }, auth_headers
 
         expect(body['email']).to eq ['Email has been taken']
       end
@@ -162,26 +240,26 @@ RSpec.describe '/api/v1/admin/users' do
       it 'updates the specified user' do
         dudette = User.create email: 'dudette@example.com', password: 'password'
 
-        user_params = {
+        params = {
           name: 'Dude',
           email: 'dude@example.com'
         }
 
-        put "/api/v1/admin/users/#{dudette.id}", { user: user_params }, auth_headers
+        put "/api/v1/admin/users/#{dudette.id}", { user: params }, auth_headers
 
         dudette.reload
 
-        expect(dudette.name).to eq user_params[:name]
-        expect(dudette.email).to eq user_params[:email]
-        expect(dudette.uid).to eq user_params[:email]
+        expect(dudette.name).to eq params[:name]
+        expect(dudette.email).to eq params[:email]
+        expect(dudette.uid).to eq params[:email]
       end
 
       it 'responds with :no_content on successful update' do
         dudette = User.create email: 'dudette@example.com', password: 'password'
 
-        user_params = { name: 'New Name' }
+        params = { name: 'New Name' }
 
-        put "/api/v1/admin/users/#{dudette.id}", { user: user_params }, auth_headers
+        put "/api/v1/admin/users/#{dudette.id}", { user: params }, auth_headers
 
         expect(header['Content-Type']).not_to be_present
         expect(response).to have_http_status :no_content
@@ -193,9 +271,9 @@ RSpec.describe '/api/v1/admin/users' do
         allow(User).to receive(:find).and_return dudette
         allow(dudette).to receive(:update).and_return false
 
-        user_params = { user: { name: 'BADNESS' } }
+        params = { user: { name: 'BADNESS' } }
 
-        put "/api/v1/admin/users/#{dudette.id}", user_params, auth_headers
+        put "/api/v1/admin/users/#{dudette.id}", params, auth_headers
 
         expect(response).to have_http_status :unprocessable_entity
       end
@@ -207,9 +285,9 @@ RSpec.describe '/api/v1/admin/users' do
         allow(User).to receive(:find).and_return dudette
         allow(dudette).to receive(:update).and_return false
 
-        user_params = { name: 'BADNESS' }
+        params = { name: 'BADNESS' }
 
-        put "/api/v1/admin/users/#{dudette.id}", { user: user_params }, auth_headers
+        put "/api/v1/admin/users/#{dudette.id}", { user: params }, auth_headers
 
         expect(body['name']).to eq ['Badness has occurred']
       end
