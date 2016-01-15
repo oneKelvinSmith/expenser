@@ -20,12 +20,15 @@ group :development, :test do
 end
 
 group :development do
+  gem 'awesome_print'
+  gem 'pry-rails'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
 end
 
 
 group :test do
+  gem 'pry'
   gem 'database_rewinder'
   gem 'rspec-rails'
   gem 'json_spec'

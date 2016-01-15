@@ -12,7 +12,7 @@ require 'action_view/railtie'
 
 Bundler.require(*Rails.groups)
 
-DotEnv.Railtie.load
+Dotenv::Railtie.load
 
 module Expenser
   class Application < Rails::Application
