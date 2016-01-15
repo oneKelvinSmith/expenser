@@ -10,13 +10,13 @@ module Api
         def index
           @users = User.all
 
-          render json: @users
+          render json: @users, adapter: :json
         end
 
         # GET /api/v1/admin/users/1
         # GET /api/v1/admin/users/1.json
         def show
-          render json: @user
+          render json: @user, adapter: :json
         end
 
         # POST /api/v1/admin/users
@@ -25,7 +25,7 @@ module Api
           @user = User.new(create_params)
 
           if @user.save
-            render json: @user, status: :created
+            render json: @user, status: :created, adapter: :json
           else
             render json: @user.errors, status: :unprocessable_entity
           end

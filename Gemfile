@@ -3,7 +3,8 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.5'
 
 gem 'rails-api', '~> 0.4.0'
-gem 'active_model_serializers', '~> 0.9.4'
+gem 'active_model_serializers', git: 'https://github.com/rails-api/active_model_serializers.git', tag: 'v0.10.0.rc3'
+
 gem 'devise_token_auth', '~> 0.1.36'
 
 gem 'ember-cli-rails', '~> 0.7.0'

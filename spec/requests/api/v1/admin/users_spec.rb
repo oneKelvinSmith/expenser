@@ -5,12 +5,9 @@ RSpec.describe '/api/v1/admin/users' do
     {
       'id'       => user.id,
       'provider' => 'email',
-      'uid'      => user.email,
       'name'     => user.name,
       'email'    => user.email,
-      'role'     => user.role,
-      'created_at' => user.created_at.as_json,
-      'updated_at' => user.updated_at.as_json
+      'role'     => user.role
     }
   end
 
@@ -127,12 +124,10 @@ RSpec.describe '/api/v1/admin/users' do
 
         expect(response).to have_http_status :ok
 
-        expect(body.count).to be 3
-        expect(body).to eq [
-          json_for(dudette),
-          json_for(dude),
-          json_for(admin)
-        ]
+        expect(body['users'].count).to be 3
+        expect(body['users']).to eq [json_for(dudette),
+                                     json_for(dude),
+                                     json_for(admin)]
       end
     end
 
@@ -144,7 +139,7 @@ RSpec.describe '/api/v1/admin/users' do
 
         expect(response).to have_http_status :ok
 
-        expect(body).to eq json_for(dudette)
+        expect(body['user']).to eq json_for(dudette)
       end
 
       it 'returns raises and error if the record isnot found' do
@@ -182,7 +177,7 @@ RSpec.describe '/api/v1/admin/users' do
 
         new_user = User.find_by email: params[:email]
 
-        expect(body).to eq json_for(new_user)
+        expect(body['user']).to eq json_for(new_user)
       end
 
       it 'responds with :created on successful create' do
