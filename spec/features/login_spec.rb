@@ -1,12 +1,13 @@
 require 'feature_helper'
 
 RSpec.feature 'Login', js: true do
+  given(:registered_email) { 'registered@example.com' }
+  given(:password)         { 'password' }
+  given!(:user) do
+    User.create email: registered_email, password: password
+  end
+
   scenario 'allows a registered user to log in' do
-    registered_email = 'registered@example.com'
-    password = 'password'
-
-    User.create! email: registered_email, password: password
-
     visit '/'
 
     expect(page).to have_link 'Log in'
@@ -22,25 +23,19 @@ RSpec.feature 'Login', js: true do
     click_button 'Log in'
 
     expect(page).to have_text 'Welcome to the Expenser!'
-    # expect(page).to have_text 'existing_user@example.com'
 
     expect(page).not_to have_link 'Log in'
     expect(page).to have_button 'Log out'
+
+    click_button 'Log out'
   end
 
   scenario 'does not not allow users to log in with incorrect details' do
-    page.driver.header 'Referer', 'https://example.com/login'
-
-    registered_email = 'registered@example.com'
-    password = 'password'
-
-    User.create email: registered_email, password: password
-
     visit '/'
 
-    click_link 'Log in'
-
     expect(page).to have_text 'Log in'
+
+    click_link 'Log in'
 
     fill_in 'Email', with: registered_email
     fill_in 'Password', with: 'INCORRECT'

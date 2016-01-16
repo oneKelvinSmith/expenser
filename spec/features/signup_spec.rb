@@ -14,13 +14,12 @@ RSpec.feature 'Signup', js: true do
 
     click_button 'Sign up'
 
-    expect(page).not_to have_text 'Sign up'
-
-    # expect(page).to have_text 'new_user@example.com'
-
     expect(page).to have_text 'Welcome to the Expenser'
 
+    expect(page).not_to have_text 'Sign up'
     expect(page).not_to have_link 'Sign up'
+
+    click_button 'Log out'
   end
 
   scenario 'with invalid details' do

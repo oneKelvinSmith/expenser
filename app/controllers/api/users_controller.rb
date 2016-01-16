@@ -1,7 +1,7 @@
 module Api
   class UsersController < Api::BaseController
-    skip_before_action :authenticate_user!
-    before_action :authenticate_admin!
+    skip_before_action :authenticate_user!, except: [:current]
+    before_action :authenticate_admin!, except: [:current]
     before_action :set_user, only: [:show, :update, :destroy]
 
     def index
@@ -36,6 +36,12 @@ module Api
       @user.destroy
 
       head :no_content
+    end
+
+    def current
+      @user = current_user
+
+      render json: @user, adapter: :json
     end
 
     private

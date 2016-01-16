@@ -1,16 +1,6 @@
 require 'requests_helper'
 
 RSpec.describe 'Users', type: :request do
-  def json(user)
-    {
-      'id'         => user.id,
-      'email'      => user.email,
-      'admin'      => user.admin,
-      'created_at' => user.created_at.as_json,
-      'updated_at' => user.updated_at.as_json
-    }
-  end
-
   context 'unauthorized user'do
     describe 'GET /users' do
       it 'responds with :unauthorized when user is not signed in' do
@@ -91,6 +81,16 @@ RSpec.describe 'Users', type: :request do
         expect(response).to have_http_status :unauthorized
       end
     end
+  end
+
+  def json(user)
+    {
+      'id'         => user.id,
+      'email'      => user.email,
+      'admin'      => user.admin,
+      'created_at' => user.created_at.as_json,
+      'updated_at' => user.updated_at.as_json
+    }
   end
 
   context 'authorized administrator' do
@@ -285,6 +285,32 @@ RSpec.describe 'Users', type: :request do
         delete '/api/users/42', {}, auth_headers(admin)
 
         expect(response).to have_http_status :not_found
+      end
+    end
+  end
+
+  context 'current user' do
+    describe 'GET /users/current' do
+      it 'returns the currently authenticated user details' do
+        user = User.create email: 'registered@example.com', password: 'password'
+
+        get '/api/current_user', {}, auth_headers(user)
+
+        expect(body['user']).to eq json(user)
+      end
+
+      it 'responds with :ok when signed in' do
+        user = User.create email: 'registered@example.com', password: 'password'
+
+        get '/api/current_user', {}, auth_headers(user)
+
+        expect(response).to have_http_status :ok
+      end
+
+      it 'responds with :unauthorized if user is not logged in' do
+        get '/api/current_user'
+
+        expect(response).to have_http_status :unauthorized
       end
     end
   end

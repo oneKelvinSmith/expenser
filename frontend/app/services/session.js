@@ -2,11 +2,25 @@ import Ember from 'ember';
 import ESASession from 'ember-simple-auth/services/session';
 
 export default ESASession.extend({
-  store: Ember.inject.service(),
-
   setCurrentUser: function() {
     if (this.get('isAuthenticated')) {
-      this.set('currentUser', this.get('NOT IMPLEMENTED'));
+      this.authorize('authorizer:oauth2', (headerName, headerValue) => {
+        const headers = {};
+
+        headers[headerName] = headerValue;
+
+        Ember.$
+          .ajax({
+            headers: headers,
+            url: '/api/current_user',
+            contentType: 'json'
+          })
+          .done(({ user }) => {
+            this.set('currentUser', user);
+          });
+
+      });
     }
   }.observes('isAuthenticated')
+
 });
