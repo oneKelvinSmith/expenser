@@ -8,5 +8,5 @@ Rails.application.routes.draw do
     post :signup, to: 'signup#register'
   end
 
-  root to: 'root#index'
+  mount_ember_app :frontend, to: '/'
 end

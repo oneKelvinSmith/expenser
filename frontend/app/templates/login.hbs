@@ -1,0 +1,36 @@
+<div class="page-header">
+  <h1>Log in</h1>
+</div>
+
+{{#if errors}}
+  <div id="errors" class="alert alert-danger col-sm-offset-2 col-md-10">
+    <strong>Log in was unsuccessful!</strong>
+    <ul>
+      {{#each errors as |error|}}
+        <li>{{error}}</li>
+      {{/each}}
+    </ul>
+  </div>
+{{/if}}
+
+<form id="login" class="form-horizontal" {{action 'login' on='submit'}}>
+  <div class="form-group">
+    <label for="email" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+      {{input value=email id="email" class="form-control" type="text" placeholder="Email"}}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="password" class="col-sm-2 control-label">Password</label>
+    <div class="col-sm-10">
+      {{input value=password id="password" class="form-control" type="password" placeholder="Password"}}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Log in</button>
+    </div>
+  </div>
+</form>

@@ -54,5 +54,19 @@ RSpec.describe 'Signup', type: :request do
         .to eq ["Password confirmation doesn't match Password",
                 'Password is too short (minimum is 8 characters)']
     end
+
+    it 'does not create a user when password confirmation is nil' do
+      credentials = {
+        email: 'new_user@example.com',
+        password: 'password',
+        password_confirmation: nil
+      }
+
+      post '/api/signup', credentials
+
+      expect(response).to have_http_status :unprocessable_entity
+      expect(body['errors'])
+        .to eq ["Password confirmation doesn't match Password"]
+    end
   end
 end

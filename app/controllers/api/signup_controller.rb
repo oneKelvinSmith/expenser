@@ -16,7 +16,8 @@ module Api
     private
 
     def signup_params
-      params.permit(:email, :password, :password_confirmation)
+      p = params.permit(:email, :password, :password_confirmation)
+      p.tap { p[:password_confirmation] ||= '' }
     end
   end
 end

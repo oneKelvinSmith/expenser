@@ -2,22 +2,20 @@ source 'https://rubygems.org'
 
 gem 'rails', '4.2.5'
 
-gem 'rails-api'
-gem 'active_model_serializers', '>=0.10.x'
+gem 'rails-api', '~> 0.4.0'
+gem 'active_model_serializers', '>= 0.10.x'
 
-gem 'pg'
+gem 'pg', '~> 0.18.4'
 
-gem 'dotenv-rails'
-gem 'puma'
-gem 'foreman'
+gem 'dotenv-rails', '~> 2.1.0'
+gem 'puma', '~> 2.15.3'
+gem 'foreman', '~> 0.78.0'
 
-gem 'rack-cors', require: 'rack/cors'
-gem 'devise'
-gem 'doorkeeper'
+gem 'rack-cors', '~> 0.4.0', require: 'rack/cors'
+gem 'devise', '~> 3.5.3'
+gem 'doorkeeper', '~> 3.1.0'
 
-group :development, :test do
-  gem 'byebug'
-end
+gem 'ember-cli-rails', '~> 0.7.0'
 
 group :development do
   gem 'awesome_print'
@@ -27,9 +25,13 @@ group :development do
 end
 
 group :test do
-  gem 'pry'
-  gem 'database_rewinder'
-  gem 'rspec-rails'
-  gem 'json_spec'
-  gem 'simplecov', require: false
+  gem 'pry', '~> 0.10.3'
+  gem 'database_rewinder', '~> 0.5.3'
+  gem 'rspec-rails', '~> 3.4.0'
+  gem 'capybara', '~> 2.5.0'
+  gem 'capybara-webkit', '~> 1.7.1'
+end
+
+group :production do
+  gem 'rails_12factor', '~> 0.0.3'
 end
