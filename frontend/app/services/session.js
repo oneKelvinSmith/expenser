@@ -6,8 +6,8 @@ export default ESASession.extend({
 
   setCurrentUser: function() {
     if (this.get('isAuthenticated')) {
+      console.log(this.get('session.content'));
       this.set('currentUser', this.get('NOT IMPLEMENTED'));
     }
   }.observes('isAuthenticated')
-
 });

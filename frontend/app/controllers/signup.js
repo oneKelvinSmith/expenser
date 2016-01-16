@@ -1,37 +1,22 @@
 /* eslint camelcase:0 */
 
 import Ember from 'ember';
-import config from '../config/environment';
 
 export default Ember.Controller.extend({
-  session: Ember.inject.service('session'),
+  registration: Ember.inject.service('registration'),
 
   actions: {
-    register: function register() {
-      const {
-        email, password, confirmation
-      } = this.getProperties('email', 'password', 'confirmation');
-
+    signup: function signup() {
       const credentials = {
-        email: email,
-        password: password,
-        password_confirmation: confirmation
+        email: this.get('email'),
+        password: this.get('password'),
+        password_confirmation: this.get('confirmation')
       };
 
-      const success = () => {
-        this
-          .get('session')
-          .authenticate('authenticator:oauth2', email, password);
-      };
-
-      const failure = ({ responseJSON }) => {
-        this
-          .set('errors', responseJSON.errors);
-      };
-
-      Ember.$
-        .post(config.apiURL + '/signup', credentials, 'json')
-        .then(success, failure);
+      this
+        .get('registration')
+        .register(credentials)
+        .catch(errors => this.set('errors', errors));
     }
   }
 });

@@ -12,7 +12,7 @@ RSpec.feature 'Signup', js: true do
     fill_in 'Password',         with: 'password'
     fill_in 'Confirm password', with: 'password'
 
-    click_button 'Register'
+    click_button 'Sign up'
 
     expect(page).not_to have_text 'Sign up'
 
@@ -31,7 +31,7 @@ RSpec.feature 'Signup', js: true do
     fill_in 'Email',            with: 'INVALID'
     fill_in 'Password',         with: 'SHORT'
 
-    click_button 'Register'
+    click_button 'Sign up'
 
     within '#errors' do
       expect(page).to have_text 'Registration cannot be completed!'
@@ -44,7 +44,7 @@ RSpec.feature 'Signup', js: true do
     fill_in 'Password',         with: 'password'
     fill_in 'Confirm password', with: 'MISMATCH'
 
-    click_button 'Register'
+    click_button 'Sign up'
 
     within '#errors' do
       expect(page).to have_text "Password confirmation doesn't match Password"
@@ -65,7 +65,7 @@ RSpec.feature 'Signup', js: true do
     fill_in 'Password',         with: password
     fill_in 'Confirm password', with: password
 
-    click_button 'Register'
+    click_button 'Sign up'
 
     within '#errors' do
       expect(page).to have_text 'Email has already been taken'
