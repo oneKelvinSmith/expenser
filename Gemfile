@@ -26,7 +26,6 @@ group :development do
   gem 'rubocop-rspec', require: false
 end
 
-
 group :test do
   gem 'pry'
   gem 'database_rewinder'
