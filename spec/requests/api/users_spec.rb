@@ -1,6 +1,18 @@
 require 'requests_helper'
 
 RSpec.describe 'Users', type: :request do
+  def request_params(inner)
+    { user: inner }.to_json
+  end
+
+  def user_params
+    { email: 'user@example.com', password: 'password' }
+  end
+
+  def create_user(overrides = {})
+    User.create user_params.merge(overrides)
+  end
+
   context 'unauthorized user'do
     describe 'GET /users' do
       it 'responds with :unauthorized when user is not signed in' do
@@ -10,7 +22,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :unauthorized when user is not an admin' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         get '/api/users', {}, auth_headers(user)
 
@@ -26,7 +38,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :unauthorized when user is not an admin' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         get '/api/users/1', {}, auth_headers(user)
 
@@ -42,7 +54,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :unauthorized when user is not an admin' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         post '/api/users', {}, auth_headers(user)
 
@@ -58,7 +70,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :unauthorized when user is not an admin' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         put '/api/users/1', {}, auth_headers(user)
 
@@ -74,7 +86,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :unauthorized when user is not an admin' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         delete '/api/users/1', {}, auth_headers(user)
 
@@ -83,43 +95,34 @@ RSpec.describe 'Users', type: :request do
     end
   end
 
-  def json(user)
-    {
-      'id'         => user.id,
-      'email'      => user.email,
-      'admin'      => user.admin
-    }
-  end
-
   context 'authorized administrator' do
     let!(:admin) do
-      User.create email: 'admin@example.com', password: 'password', admin: true
+      create_user email: 'admin@example.com', admin: true
     end
 
     describe 'GET /users' do
       it 'returns a list of users' do
-        password = 'password'
-        user = User.create email: 'user@example.com', password: password
+        user = create_user
 
         get '/api/users', {}, auth_headers(admin)
 
         expect(response).to have_http_status :ok
 
         expect(body['users'].count).to be 2
-        expect(body['users']).to eq [json(admin),
-                                     json(user)]
+        expect(body['users']).to eq [user_json(admin),
+                                     user_json(user)]
       end
     end
 
     describe 'GET /users/1' do
       it 'returns the specific user' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         get "/api/users/#{user.id}", {}, auth_headers(admin)
 
         expect(response).to have_http_status :ok
 
-        expect(body['user']).to eq json(user)
+        expect(body['user']).to eq user_json(user)
       end
 
       it 'returns raises and error if the record isnot found' do
@@ -132,9 +135,9 @@ RSpec.describe 'Users', type: :request do
     describe 'POST /users' do
       it 'creates a new user' do
         email = 'new_user@example.com'
-        params = user_params email: email,
-                             password: 'password',
-                             password_confirmation: 'password'
+        params = request_params email: email,
+                                password: 'password',
+                                password_confirmation: 'password'
 
         post '/api/users', params, auth_headers(admin)
 
@@ -145,21 +148,21 @@ RSpec.describe 'Users', type: :request do
 
       it 'returns the created user' do
         email = 'new_user@example.com'
-        params = user_params email: email,
-                             password: 'password',
-                             password_confirmation: 'password'
+        params = request_params email: email,
+                                password: 'password',
+                                password_confirmation: 'password'
 
         post '/api/users', params, auth_headers(admin)
 
         new_user = User.find_by email: email
 
-        expect(body['user']).to eq json(new_user)
+        expect(body['user']).to eq user_json(new_user)
       end
 
       it 'responds with :created on successful create' do
-        params = user_params email: 'new_user@example.com',
-                             password: 'password',
-                             password_confirmation: 'password'
+        params = request_params email: 'new_user@example.com',
+                                password: 'password',
+                                password_confirmation: 'password'
 
         post '/api/users', params, auth_headers(admin)
 
@@ -173,14 +176,14 @@ RSpec.describe 'Users', type: :request do
           password_confirmation: 'password'
         }
 
-        user_params = user_params(params)
+        request_params = request_params(params)
 
         new_user = User.new params
 
         allow(User).to receive(:new).and_return new_user
         allow(new_user).to receive(:save).and_return false
 
-        post '/api/users', user_params, auth_headers(admin)
+        post '/api/users', request_params, auth_headers(admin)
 
         expect(response).to have_http_status :unprocessable_entity
       end
@@ -192,7 +195,7 @@ RSpec.describe 'Users', type: :request do
           password_confirmation: 'password'
         }
 
-        user_params = user_params(params)
+        request_params = request_params(params)
 
         new_user = User.new params
 
@@ -201,7 +204,7 @@ RSpec.describe 'Users', type: :request do
         allow(User).to receive(:new).and_return new_user
         allow(new_user).to receive(:save).and_return false
 
-        post '/api/users', user_params, auth_headers(admin)
+        post '/api/users', request_params, auth_headers(admin)
 
         expect(body['email']).to eq ['Email has been taken']
       end
@@ -209,22 +212,21 @@ RSpec.describe 'Users', type: :request do
 
     describe 'PATCH/PUT /users/1 ' do
       it 'updates the specified user' do
-        email = 'user@example.com'
-        user = User.create email: email, password: 'password'
+        user = create_user email: 'user@example.com'
 
-        params = user_params email: 'user@example.com'
+        params = request_params email: 'new_email@example.com'
 
         put "/api/users/#{user.id}", params, auth_headers(admin)
 
         user.reload
 
-        expect(user.email).to eq email
+        expect(user.email).to eq 'new_email@example.com'
       end
 
       it 'responds with :no_content on successful update' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
-        params = user_params admin: true
+        params = request_params admin: true
 
         put "/api/users/#{user.id}", params, auth_headers(admin)
 
@@ -233,9 +235,9 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :uprocessable_entity when update fails' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
-        params = user_params email: 'NOT AN EMAIL'
+        params = request_params email: 'NOT AN EMAIL'
 
         put "/api/users/#{user.id}", params, auth_headers(admin)
 
@@ -243,9 +245,9 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'renders errors when update fails' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
-        params = user_params email: 'NOT AND EMAIL'
+        params = request_params email: 'NOT AND EMAIL'
 
         put "/api/users/#{user.id}", params, auth_headers(admin)
 
@@ -261,7 +263,7 @@ RSpec.describe 'Users', type: :request do
 
     describe 'DELETE /users/1' do
       it 'deletes the specified user' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         delete "/api/users/#{user.id}", {}, auth_headers(admin)
 
@@ -271,7 +273,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :no_content on successful delete' do
-        user = User.create email: 'user@example.com', password: 'password'
+        user = create_user
 
         delete "/api/users/#{user.id}", {}, auth_headers(admin)
 
@@ -294,7 +296,7 @@ RSpec.describe 'Users', type: :request do
 
         get '/api/current_user', {}, auth_headers(user)
 
-        expect(body['user']).to eq json(user)
+        expect(body['user']).to eq user_json(user)
       end
 
       it 'responds with :ok when signed in' do

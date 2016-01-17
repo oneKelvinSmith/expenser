@@ -27,9 +27,7 @@ module Api
         Thread.current[:current_user] = User.find(user_id)
       end
 
-      found = yield
-
-      return if found
+      return if yield
 
       render_unauthorized
     end

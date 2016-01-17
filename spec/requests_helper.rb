@@ -13,13 +13,17 @@ module Requests
     def status
       response.status
     end
+
+    def user_json(user)
+      {
+        'id'         => user.id,
+        'email'      => user.email,
+        'admin'      => user.admin
+      }
+    end
   end
 
   module AuthHelpers
-    def user_params(hash)
-      { user: hash }.to_json
-    end
-
     def access_token(user)
       application = Doorkeeper::Application
                     .create(name: 'Client', redirect_uri: 'https://example.com')
