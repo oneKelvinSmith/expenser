@@ -3,15 +3,14 @@ class Expense < ActiveRecord::Base
   validates :amount, numericality: { greater_than_or_equal_to: 0.01 }
 
   belongs_to :user
-  before_validation :default_date_and_time
+  before_validation :default_datetime
 
   attr_writer :clock
 
   private
 
-  def default_date_and_time
-    self.time = clock.now.to_time if time.nil?
-    self.date = clock.now.to_date if date.nil?
+  def default_datetime
+    self.datetime = clock.now if datetime.nil?
   end
 
   def clock

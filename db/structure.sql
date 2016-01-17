@@ -39,8 +39,7 @@ SET default_with_oids = false;
 
 CREATE TABLE expenses (
     id integer NOT NULL,
-    date date NOT NULL,
-    "time" time without time zone NOT NULL,
+    datetime timestamp without time zone NOT NULL,
     description character varying NOT NULL,
     amount numeric NOT NULL,
     comment text,

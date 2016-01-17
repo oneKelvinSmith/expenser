@@ -1,8 +1,7 @@
 class CreateExpenses < ActiveRecord::Migration
   def change
     create_table :expenses do |t|
-      t.date :date,          null: false
-      t.time :time,          null: false
+      t.datetime :datetime,  null: false
       t.string :description, null: false
       t.decimal :amount,     null: false
       t.text :comment

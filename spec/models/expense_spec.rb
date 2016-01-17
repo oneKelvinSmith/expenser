@@ -25,36 +25,32 @@ RSpec.describe Expense do
         expense = Expense.new description: 'Lunch', amount: 0.001, user: user
 
         expect(expense).not_to be_valid
-        expect(expense.errors[:amount]).to include 'must be greater than or equal to 0.01'
+        expect(expense.errors[:amount])
+          .to include 'must be greater than or equal to 0.01'
       end
 
       context 'date and time' do
         it 'sets default date and time on validation' do
-          now = Time.now
-          today = Date.today
+          now = DateTime.now
 
           expense = Expense.new
           expense.clock = OpenStruct.new(now: now)
 
-          expect(expense.time).to be_nil
-          expect(expense.date).to be_nil
+          expect(expense.datetime).to be_nil
 
           expense.valid?
 
-          expect(expense.time).to eq now
-          expect(expense.date).to eq today
+          expect(expense.datetime).to eq now
         end
 
         it 'does not default date and time when they have been set' do
-          now = Time.now
-          today = Date.today
+          now = DateTime.now
 
-          expense = Expense.new time: Time.now - 1.hour, date: Date.yesterday
+          expense = Expense.new datetime: DateTime.now - 1.hour
 
           expense.valid?
 
-          expect(expense.time).not_to eq now
-          expect(expense.date).not_to eq today
+          expect(expense.datetime).not_to eq now
         end
       end
     end
