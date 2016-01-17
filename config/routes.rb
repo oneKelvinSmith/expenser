@@ -4,6 +4,8 @@ Rails.application.routes.draw do
 
   namespace :api do
     resources :users
+    resources :expenses
+
     get :current_user, to: 'users#current'
 
     post :signup, to: 'signup#register'
