@@ -4,7 +4,7 @@ module Api
     before_action :set_expense, only: [:show, :update, :destroy]
 
     def index
-      @expenses = Expense.all
+      @expenses = user_expenses
 
       render json: @expenses, adapter: :json
     end
@@ -24,8 +24,6 @@ module Api
     end
 
     def update
-      @expense = Expense.find(params[:id])
-
       if @expense.update(expense_params)
         head :no_content
       else
@@ -41,8 +39,13 @@ module Api
 
     private
 
+    def user_expenses
+      return Expense.all if current_user.admin?
+      Expense.where(user: current_user)
+    end
+
     def set_expense
-      @expense = Expense.find(params[:id])
+      @expense = user_expenses.find(params[:id])
     end
 
     def expense_params

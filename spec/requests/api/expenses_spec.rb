@@ -66,7 +66,11 @@ RSpec.describe 'Expenses', type: :request do
     Expense.create expense_params.merge(overrides)
   end
 
-  context 'authorized expense' do
+  context 'authorized users' do
+    let!(:admin) do
+      User.create email: 'admin@example.com', password: 'password', admin: true
+    end
+
     let!(:employee) do
       User.create email: 'employee@example.com', password: 'password'
     end
@@ -86,6 +90,21 @@ RSpec.describe 'Expenses', type: :request do
                                         json(water),
                                         json(stims)]
       end
+
+      it 'does not return expenses created by other users' do
+        rads =  create_expense description: 'RadAway'
+        stims = create_expense description: 'Stimpak'
+
+        create_expense description: 'Pure Water', user: admin
+
+        get '/api/expenses', {}, auth_headers(employee)
+
+        expect(response).to have_http_status :ok
+
+        expect(body['expenses'].count).to be 2
+        expect(body['expenses']).to match_array [json(rads),
+                                                 json(stims)]
+      end
     end
 
     describe 'GET /expenses/1' do
@@ -101,6 +120,14 @@ RSpec.describe 'Expenses', type: :request do
 
       it 'returns raises and error if the record isnot found' do
         get '/api/expenses/42', {}, auth_headers(employee)
+
+        expect(response).to have_http_status :not_found
+      end
+
+      it "does not return another user's expense" do
+        expense = create_expense description: 'RadAway', user: admin
+
+        get "/api/expenses/#{expense.id}", {}, auth_headers(employee)
 
         expect(response).to have_http_status :not_found
       end
@@ -151,8 +178,9 @@ RSpec.describe 'Expenses', type: :request do
         expect(response).to have_http_status :unprocessable_entity
       end
 
-      it 'renders errors when update fails' do
-        params = request_params description: nil, amount: 0.00,
+      it 'renders errors when create fails' do
+        params = request_params description: nil,
+                                amount: 0.00,
                                 user_id: employee.id
 
         post '/api/expenses', params, auth_headers(employee)
@@ -211,6 +239,16 @@ RSpec.describe 'Expenses', type: :request do
 
         expect(response).to have_http_status :not_found
       end
+
+      it "does not update another user's expense" do
+        expense = create_expense description: 'RadAway', user: admin
+
+        params = request_params description: 'Pure Water'
+
+        put "/api/expenses/#{expense.id}", params, auth_headers(employee)
+
+        expect(response).to have_http_status :not_found
+      end
     end
 
     describe 'DELETE /expenses/1' do
@@ -237,6 +275,75 @@ RSpec.describe 'Expenses', type: :request do
         delete '/api/expenses/42', {}, auth_headers(employee)
 
         expect(response).to have_http_status :not_found
+      end
+
+      it "does not delete another user's expense" do
+        expense = create_expense description: 'RadAway', user: admin
+
+        delete "/api/expenses/#{expense.id}", {}, auth_headers(employee)
+
+        expect(response).to have_http_status :not_found
+      end
+    end
+
+    context 'with admin privileges' do
+      describe 'GET /expenses' do
+        it 'returns all expenses' do
+          rads =  create_expense description: 'RadAway'
+          water = create_expense description: 'Pure Water', user: admin
+          stims = create_expense description: 'Stimpak'
+
+          get '/api/expenses', {}, auth_headers(admin)
+
+          expect(response).to have_http_status :ok
+
+          expect(body['expenses'].count).to be 3
+          expect(body['expenses']).to match_array [json(rads),
+                                                   json(water),
+                                                   json(stims)]
+        end
+      end
+
+      describe 'GET /expenses/1' do
+        it 'returns any expense' do
+          expense = create_expense description: 'RadAway'
+
+          get "/api/expenses/#{expense.id}", {}, auth_headers(admin)
+
+          expect(response).to have_http_status :ok
+
+          expect(body['expense']).to eq json(expense)
+        end
+      end
+
+      describe 'PUT /expenses/1' do
+        it "updates another any user's expense" do
+          expense = create_expense description: 'RadAway', user: employee
+
+          params = request_params description: 'Pure Water'
+
+          put "/api/expenses/#{expense.id}", params, auth_headers(admin)
+
+          expense.reload
+
+          expect(response).to have_http_status :no_content
+
+          expect(expense.description).to eq 'Pure Water'
+        end
+      end
+
+      describe 'DELETE /expenses/1' do
+        it "delets any user's expense" do
+          expense = create_expense description: 'RadAway', user: employee
+
+          delete "/api/expenses/#{expense.id}", {}, auth_headers(admin)
+
+          expect(response).to have_http_status :no_content
+
+          expect do
+            Expense.find expense.id
+          end.to raise_error ActiveRecord::RecordNotFound
+        end
       end
     end
   end
