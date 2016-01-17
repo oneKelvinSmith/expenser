@@ -22,7 +22,8 @@ module Features
   end
 end
 
-Capybara.javascript_driver = :selenium
+Capybara.javascript_driver = :webkit
+Capybara.javascript_driver = :selenium if Rails.env == 'development'
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false

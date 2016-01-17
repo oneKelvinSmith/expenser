@@ -7,6 +7,11 @@ class Expense < ActiveRecord::Base
 
   attr_writer :clock
 
+  def self.for_user(user)
+    return all if user.admin
+    where(user: user)
+  end
+
   private
 
   def default_datetime

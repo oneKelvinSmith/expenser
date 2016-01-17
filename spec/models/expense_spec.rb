@@ -1,6 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe Expense do
+  describe '.for_user' do
+    it 'returns expenses scoped to user' do
+      employee = User.create email: 'employee@example.com', password: 'password'
+      admin = User.create email: 'admin@example.com', password: 'password',
+                          admin: true
+
+      Expense.create description: 'Employee', amount: 42, user: employee
+      Expense.create description: 'Admin', amount: 42, user: admin
+
+      expenses = Expense.for_user(employee)
+
+      expect(expenses.count).to be 1
+      expect(expenses.first.user).to eq employee
+    end
+
+    it 'returns all expenses for an admin' do
+      employee = User.create email: 'employee@example.com', password: 'password'
+      admin = User.create email: 'admin@example.com', password: 'password',
+                          admin: true
+
+      Expense.create description: 'Employee', amount: 42, user: employee
+      Expense.create description: 'Admin', amount: 42, user: admin
+
+      expenses = Expense.for_user(admin)
+
+      expect(expenses.count).to be 2
+    end
+  end
+
   context 'validations' do
     describe '#valid?' do
       it 'is not valid by default' do

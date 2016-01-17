@@ -40,8 +40,7 @@ module Api
     private
 
     def user_expenses
-      return Expense.all if current_user.admin?
-      Expense.where(user: current_user)
+      Expense.for_user(current_user)
     end
 
     def set_expense
