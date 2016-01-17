@@ -87,9 +87,7 @@ RSpec.describe 'Users', type: :request do
     {
       'id'         => user.id,
       'email'      => user.email,
-      'admin'      => user.admin,
-      'created_at' => user.created_at.as_json,
-      'updated_at' => user.updated_at.as_json
+      'admin'      => user.admin
     }
   end
 

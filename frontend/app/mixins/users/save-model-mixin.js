@@ -3,14 +3,15 @@ import Ember from 'ember';
 export default Ember.Mixin.create({
   actions: {
     save: function() {
-      var route = this;
-      this.currentModel.save().then(function() {
-        route.transitionTo('users');
-      }, function() {
-        console.log('Failed to save the model');
-      });
+      this
+        .currentModel
+        .save()
+        .then(() => {
+          this.transitionTo('users');
+        });
     }
   },
+
   deactivate: function() {
     if (this.currentModel.get('isNew')) {
       this.currentModel.deleteRecord();

@@ -5,11 +5,10 @@ import AuthenticatedRouteMixin from 'ember-simple-auth/mixins/authenticated-rout
 export default Ember.Route.extend(AuthenticatedRouteMixin, {
   actions: {
     remove: function(model) {
-      if (confirm('Are you sure?')) {
-        model.destroyRecord();
-      }
+      model.destroyRecord();
     }
   },
+
   model: function() {
     return this.store.findAll('user');
   }
