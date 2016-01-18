@@ -50,7 +50,7 @@ RSpec.describe 'Expenses', type: :request do
       'description' => expense.description,
       'amount'      => expense.amount.as_json,
       'comment'     => expense.comment,
-      'user'        => user_json(expense.user)
+      'user_id'     => expense.user.id
     }
   end
 
@@ -131,27 +131,36 @@ RSpec.describe 'Expenses', type: :request do
 
         expect(response).to have_http_status :not_found
       end
+
+      it 'side loads the user' do
+        expense = create_expense description: 'RadAway'
+
+        get "/api/expenses/#{expense.id}", {}, auth_headers(employee)
+
+        expect(response).to have_http_status :ok
+
+        expect(body['users']).to eq [user_json(expense.user)]
+      end
     end
 
     describe 'POST /expenses' do
-      it 'creates a new expense' do
+      it 'creates a new expense for the current user' do
         description = 'RadAway'
         params = request_params description: description,
-                                amount: 42.0,
-                                user_id: employee.id
+                                amount: 42.0
 
         post '/api/expenses', params, auth_headers(employee)
 
         new_expense = Expense.find_by description: description
 
+        expect(new_expense.user).to eq employee
         expect(new_expense.description).to eq description
       end
 
       it 'returns the created expense' do
         description = 'RadAway'
         params = request_params description: description,
-                                amount: 42.0,
-                                user_id: employee.id
+                                amount: 42.0
 
         post '/api/expenses', params, auth_headers(employee)
 
@@ -162,8 +171,7 @@ RSpec.describe 'Expenses', type: :request do
 
       it 'responds with :created on successful create' do
         params = request_params description: 'RadAway',
-                                amount: 42.0,
-                                user_id: employee.id
+                                amount: 42.0
 
         post '/api/expenses', params, auth_headers(employee)
 
@@ -180,8 +188,7 @@ RSpec.describe 'Expenses', type: :request do
 
       it 'renders errors when create fails' do
         params = request_params description: nil,
-                                amount: 0.00,
-                                user_id: employee.id
+                                amount: 0.00
 
         post '/api/expenses', params, auth_headers(employee)
 
@@ -217,7 +224,7 @@ RSpec.describe 'Expenses', type: :request do
       it 'responds with :uprocessable_entity when update fails' do
         expense = create_expense description: 'RadAway'
 
-        params = request_params user_id: nil
+        params = request_params description: nil
 
         put "/api/expenses/#{expense.id}", params, auth_headers(employee)
 
@@ -301,6 +308,29 @@ RSpec.describe 'Expenses', type: :request do
           expect(body['expenses']).to match_array [json(rads),
                                                    json(water),
                                                    json(stims)]
+        end
+      end
+
+      describe 'POST /expenses' do
+        it 'creates an expense for a given user' do
+          params = request_params description: "Employee's Expense", amount: 99,
+                                  user_id: employee.id
+
+          post '/api/expenses', params, auth_headers(admin)
+
+          new_expense = Expense.find_by description: "Employee's Expense"
+
+          expect(new_expense.user).to eq employee
+        end
+
+        it 'defaults to current user when no user is provided' do
+          params = request_params description: "Admin's Expense", amount: 99
+
+          post '/api/expenses', params, auth_headers(admin)
+
+          new_expense = Expense.find_by description: "Admin's Expense"
+
+          expect(new_expense.user).to eq admin
         end
       end
 
