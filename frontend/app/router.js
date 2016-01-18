@@ -19,6 +19,17 @@ Router.map(function() {
       path: ':user_id'
     });
   });
+  this.route('expenses', function() {
+    this.route('new');
+
+    this.route('edit', {
+      path: ':expense_id/edit'
+    });
+
+    this.route('show', {
+      path: ':expense_id'
+    });
+  });
 });
 
 export default Router;

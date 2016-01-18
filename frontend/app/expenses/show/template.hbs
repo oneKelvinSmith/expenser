@@ -1,0 +1,53 @@
+<p>
+  {{link-to "Back to Expenses" "expenses.index" }}
+</p>
+
+<div class="page-header">
+  <h1>Expense</h1>
+</div>
+
+<p>
+  <div class="row">
+    <div class="col-sm-2 text-right">
+      <strong>Datetime</strong>
+    </div>
+    <div class="col-sm-10">
+      {{model.datetime}}
+    </div>
+  </div>
+</p>
+
+<p>
+  <div class="row">
+    <div class="col-sm-2 text-right">
+      <strong>Description</strong>
+    </div>
+    <div class="col-sm-10">
+      {{model.description}}
+    </div>
+  </div>
+</p>
+
+<p>
+  <div class="row">
+    <div class="col-sm-2 text-right">
+      <strong>Amount</strong>
+    </div>
+    <div class="col-sm-10">
+      {{model.amount}}
+    </div>
+  </div>
+</p>
+
+{{#if model.comment}}
+  <p>
+    <div class="row">
+      <div class="col-sm-2 text-right">
+        <strong>Comment</strong>
+      </div>
+      <div class="col-sm-10">
+        {{model.Comment}}
+      </div>
+    </div>
+  </p>
+{{/if}}

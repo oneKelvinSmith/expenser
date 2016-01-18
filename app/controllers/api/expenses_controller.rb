@@ -47,15 +47,18 @@ module Api
       @expense = user_expenses.find(params[:id])
     end
 
-    def user_id
-      return base_params[:user_id] || current_user.id if current_user.admin?
-      current_user.id
-    end
-
     def base_params
       params
         .require(:expense)
         .permit(:datetime, :description, :amount, :comment, :user_id)
+    end
+
+    def user_id
+      if current_user.admin?
+        base_params[:user_id] || current_user.id
+      else
+        current_user.id
+      end
     end
 
     def expense_params

@@ -15,6 +15,7 @@
       <ul class="nav navbar-nav navbar-right">
         {{#if session.isAuthenticated}}
           <li>{{#link-to 'index'}}<i>{{session.currentUser.email}}</i>{{/link-to}}</li>
+            <li>{{#link-to 'expenses'}}Expenses{{/link-to}}</li>
           {{#if session.currentUser.admin}}
             <li>{{#link-to 'users'}}Users{{/link-to}}</li>
           {{/if}}
