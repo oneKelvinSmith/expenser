@@ -1,15 +1,29 @@
 <p>
-  {{link-to "User list" "users.index" }}
+  {{link-to "Back to Users" "users.index" }}
 </p>
 
-<h1>User show</h1>
-
-<p>
-  <strong>Email:</strong>
-  <span>{{model.email}}</span>
-</p>
+<div class="page-header">
+  <h1>Show User</h1>
+</div>
 
 <p>
-  <strong>Admin:</strong>
-  <span>{{model.admin}}</span>
+  <div class="row">
+    <span class="col-sm-2 text-right">
+      <strong>Email</strong>
+    </span>
+    <span class="col-sm-10">
+      {{model.email}}
+    </span>
+  </div>
 </p>
+
+{{#if model.admin}}
+  <p>
+    <div class="row">
+      <span class="col-sm-2 text-right">
+        <strong>Admin</strong>
+      </span>
+      <span class="col-sm-10 glyphicon glyphicon-ok" aria-hidden="true"/>
+    </div>
+  </p>
+{{/if}}

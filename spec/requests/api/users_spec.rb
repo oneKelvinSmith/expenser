@@ -135,9 +135,7 @@ RSpec.describe 'Users', type: :request do
     describe 'POST /users' do
       it 'creates a new user' do
         email = 'new_user@example.com'
-        params = request_params email: email,
-                                password: 'password',
-                                password_confirmation: 'password'
+        params = request_params email: email, admin: true
 
         post '/api/users', params, auth_headers(admin)
 
@@ -146,11 +144,29 @@ RSpec.describe 'Users', type: :request do
         expect(new_user.email).to eq email
       end
 
+      it 'generates a password for the new user' do
+        allow(Devise).to receive(:friendly_token).and_return('password')
+        params = request_params email: 'new_user@example.com', admin: true
+
+        post '/api/users', params, auth_headers(admin)
+
+        expect(Devise).to have_received(:friendly_token)
+      end
+
+      it 'creates a new admin' do
+        email = 'new_email@example.com'
+        params = request_params email: email, admin: true
+
+        post '/api/users', params, auth_headers(admin)
+
+        new_user = User.find_by email: email
+
+        expect(new_user).to be_admin
+      end
+
       it 'returns the created user' do
         email = 'new_user@example.com'
-        params = request_params email: email,
-                                password: 'password',
-                                password_confirmation: 'password'
+        params = request_params email: email
 
         post '/api/users', params, auth_headers(admin)
 
@@ -160,9 +176,7 @@ RSpec.describe 'Users', type: :request do
       end
 
       it 'responds with :created on successful create' do
-        params = request_params email: 'new_user@example.com',
-                                password: 'password',
-                                password_confirmation: 'password'
+        params = request_params email: 'new_user@example.com'
 
         post '/api/users', params, auth_headers(admin)
 
@@ -171,9 +185,7 @@ RSpec.describe 'Users', type: :request do
 
       it 'responds with :unprocessable_entity when create fails' do
         params = {
-          email: 'new_user@example.com',
-          password: 'password',
-          password_confirmation: 'password'
+          email: 'new_user@example.com', password: 'password'
         }
 
         request_params = request_params(params)
@@ -188,11 +200,9 @@ RSpec.describe 'Users', type: :request do
         expect(response).to have_http_status :unprocessable_entity
       end
 
-      it 'renders errors when update fails' do
+      it 'renders errors when create fails' do
         params = {
-          email: 'new_user@example.com',
-          password: 'password',
-          password_confirmation: 'password'
+          email: 'new_user@example.com', password: 'password'
         }
 
         request_params = request_params(params)

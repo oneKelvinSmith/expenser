@@ -9,10 +9,21 @@
 <p>
   <div class="row">
     <div class="col-sm-2 text-right">
-      <strong>Datetime</strong>
+      <strong>Date</strong>
     </div>
     <div class="col-sm-10">
-      {{model.datetime}}
+      {{format-date model.datetime}}
+    </div>
+  </div>
+</p>
+
+<p>
+  <div class="row">
+    <div class="col-sm-2 text-right">
+      <strong>Time</strong>
+    </div>
+    <div class="col-sm-10">
+      {{format-time model.datetime}}
     </div>
   </div>
 </p>
@@ -34,7 +45,7 @@
       <strong>Amount</strong>
     </div>
     <div class="col-sm-10">
-      {{model.amount}}
+      {{format-currency model.amount}}
     </div>
   </div>
 </p>
@@ -46,7 +57,7 @@
         <strong>Comment</strong>
       </div>
       <div class="col-sm-10">
-        {{model.Comment}}
+        {{model.comment}}
       </div>
     </div>
   </p>

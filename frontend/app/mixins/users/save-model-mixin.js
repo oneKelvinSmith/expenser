@@ -1,3 +1,5 @@
+/* eslint camelcase:0 */
+
 import Ember from 'ember';
 
 export default Ember.Mixin.create({

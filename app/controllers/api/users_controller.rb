@@ -15,7 +15,8 @@ module Api
     end
 
     def create
-      @user = User.new(create_params)
+      generated_password = Devise.friendly_token.first(8)
+      @user = User.new(user_params.merge(password: generated_password))
 
       if @user.save
         render json: @user, status: :created
@@ -52,12 +53,6 @@ module Api
 
     def user_params
       params.require(:user).permit(:email, :admin)
-    end
-
-    def create_params
-      params
-        .require(:user)
-        .permit(:email, :password, :password_confirmation)
     end
   end
 end

@@ -7,7 +7,7 @@ module Api
       user = User.new(signup_params)
 
       if user.save
-        render json: user, status: :created, adapter: :json
+        render json: user, status: :created
       else
         render json: errors(user.errors), status: :unprocessable_entity
       end

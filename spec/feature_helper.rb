@@ -20,13 +20,32 @@ module Features
       click_button 'Log out'
     end
   end
+
+  module TimeHelpers
+    def now
+      DateTime.now
+    end
+
+    def formatted_datetime(datetime)
+      datetime.strftime('%B %e %Y at %H:%M')
+    end
+
+    def formatted_date(datetime)
+      datetime.strftime('%B %e %Y')
+    end
+
+    def formatted_time(datetime)
+      datetime.strftime('%l:%M %P').strip
+    end
+  end
 end
 
 Capybara.javascript_driver = :webkit
-Capybara.javascript_driver = :selenium if Rails.env == 'development'
+# Capybara.javascript_driver = :selenium
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.include Features::AuthHelpers, type: :feature
+  config.include Features::TimeHelpers, type: :feature
 end
