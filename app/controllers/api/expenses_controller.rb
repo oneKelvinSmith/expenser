@@ -6,18 +6,18 @@ module Api
     def index
       @expenses = user_expenses
 
-      render json: @expenses, adapter: :json
+      render json: @expenses
     end
 
     def show
-      render json: @expense, adapter: :json
+      render json: @expense
     end
 
     def create
       @expense = Expense.new(expense_params)
 
       if @expense.save
-        render json: @expense, status: :created, adapter: :json
+        render json: @expense, status: :created
       else
         render json: @expense.errors, status: :unprocessable_entity
       end

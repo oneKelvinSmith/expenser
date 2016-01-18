@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.5'
 
 gem 'rails-api', '~> 0.4.0'
-gem 'active_model_serializers', '>= 0.10.x'
+gem 'active_model_serializers', '~> 0.9.4'
 
 gem 'pg', '~> 0.18.4'
 

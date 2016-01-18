@@ -1,5 +1,7 @@
 module Api
   class BaseController < ActionController::API
+    include ActionController::Serialization
+
     clear_respond_to
     respond_to :json
 
