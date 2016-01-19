@@ -6,9 +6,11 @@ require 'capybara/rspec'
 module Features
   module AuthHelpers
     def login(user)
-      visit '/login'
+      visit '/'
 
-      fill_in 'Email', with: user.email
+      click_link 'Log in'
+
+      fill_in 'Email',    with: user.email
       fill_in 'Password', with: user.password
 
       click_button 'Log in'
@@ -41,7 +43,7 @@ module Features
 end
 
 Capybara.javascript_driver = :webkit
-# Capybara.javascript_driver = :selenium
+#  Capybara.javascript_driver = :selenium
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = false

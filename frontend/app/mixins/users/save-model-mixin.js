@@ -1,5 +1,3 @@
-/* eslint camelcase:0 */
-
 import Ember from 'ember';
 
 export default Ember.Mixin.create({
@@ -8,9 +6,7 @@ export default Ember.Mixin.create({
       this
         .currentModel
         .save()
-        .then(() => {
-          this.transitionTo('users');
-        });
+        .then(() => this.transitionTo('users'));
     }
   },
 

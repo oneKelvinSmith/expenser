@@ -8,6 +8,11 @@ export default Ember.Route.extend({
   },
 
   model: function() {
-    return this.store.findAll('expense');
+    return this
+      .store
+      .findAll('expense')
+      .then(expenses => {
+        return expenses.sortBy('datetime');
+      });
   }
 });
