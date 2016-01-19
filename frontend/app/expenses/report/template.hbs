@@ -1,9 +1,10 @@
-<p>
+<p class="hidden-print">
   {{link-to "Back to Expenses" "expenses.index" }}
 </p>
 
 <div class="page-header">
-  <h2>Expense Report <small>for week ending: {{format-date model.weekEnd}}</small></h2>
+  <h2>Expense Report <small class="visible-print-inline">({{session.currentUser.email}})</small></h2>
+  <h2><small>Week ending: {{format-date weekEnd}}</small></h2>
 </div>
 
 <p>
@@ -12,7 +13,7 @@
       <strong>Total Amount</strong>
     </div>
     <div class="col-sm-10">
-      {{format-currency model.totalAmount}}
+      {{format-currency totalAmount}}
     </div>
   </div>
 </p>
@@ -23,7 +24,7 @@
       <strong>Average Daily Spend</strong>
     </div>
     <div class="col-sm-10">
-      {{format-currency model.dailyAverage}}
+      {{format-currency dailyAverage}}
     </div>
   </div>
 </p>

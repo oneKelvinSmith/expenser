@@ -13,7 +13,7 @@ export default Ember.Route.extend(AuthenticatedRouteMixin, {
       .store
       .findAll('expense')
       .then(expenses => {
-        return expenses.sortBy('datetime');
+        return expenses.sortBy('datetime').reverse();
       });
   }
 });

@@ -18,31 +18,21 @@ export default Ember.Controller.extend({
   },
 
   filtered: computed('model', 'description', function() {
-    const sorted = this.get('model');
     const description = this.get('description');
+    const start = this.get('start');
+    const end = this.get('end');
+
+    let filtered = this.get('model');
 
     if (isPresent(description)) {
-      return this.filterByDescription(sorted, description);
+      filtered = this.filterByDescription(filtered, description);
     }
 
-    return sorted;
-  }),
+    if (isPresent(start) || isPresent(end)) {
+      filtered = this.filterByTime(filtered, start, end);
+    }
 
-  report: computed('model.@each.datetime', function() {
-    const weekStart = moment().startOf('isoWeek').startOf('day');
-    const weekEnd = moment().endOf('isoWeek').endOf('day');
-    const expenses = this.filterByTime(this.get('model'), weekStart, weekEnd);
-    const totalAmount = this.totalAmount(expenses);
-    const dailyAverage = this.dailyAverage(totalAmount);
-
-    const report = Ember.Object.create({
-      weekEnd: weekEnd,
-      weekStart: weekStart,
-      totalAmount: totalAmount,
-      dailyAverage: dailyAverage
-    });
-
-    return report;
+    return filtered;
   }),
 
   filterByDescription: function(expenses, description) {
@@ -58,13 +48,5 @@ export default Ember.Controller.extend({
     return expenses.filter(expense => {
       return moment(expense.get('datetime')).isBetween(start, end);
     });
-  },
-
-  totalAmount: function(expenses) {
-    return expenses.reduce((sum, expense) => sum + expense.get('amount'), 0);
-  },
-
-  dailyAverage: function(totalAmount) {
-    return (totalAmount / 7).toFixed(2);
   }
 });
