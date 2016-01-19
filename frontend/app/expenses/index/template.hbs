@@ -2,8 +2,9 @@
   <h1>Expenses</h1>
 </div>
 
-<div class="col-sm-2">
-  <p>{{link-to "New Expense" "expenses.new" class="btn btn-default"}}</p>
+<div class="row col-sm-4">
+  <p class="col-sm-7">{{link-to "New Expense" "expenses.new" class="btn btn-default"}}</p>
+  <p class="col-sm-5">{{link-to "Report" "expenses.report" class="btn btn-default"}}</p>
 </div>
 
 {{#if filtered.length}}

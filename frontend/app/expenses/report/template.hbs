@@ -1,0 +1,29 @@
+<p>
+  {{link-to "Back to Expenses" "expenses.index" }}
+</p>
+
+<div class="page-header">
+  <h2>Expense Report <small>for week ending: {{format-date model.weekEnd}}</small></h2>
+</div>
+
+<p>
+  <div class="row">
+    <div class="col-sm-2">
+      <strong>Total Amount</strong>
+    </div>
+    <div class="col-sm-10">
+      {{format-currency model.totalAmount}}
+    </div>
+  </div>
+</p>
+
+<p>
+  <div class="row">
+    <div class="col-sm-2">
+      <strong>Average Daily Spend</strong>
+    </div>
+    <div class="col-sm-10">
+      {{format-currency model.dailyAverage}}
+    </div>
+  </div>
+</p>

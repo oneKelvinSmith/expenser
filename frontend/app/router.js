@@ -29,6 +29,7 @@ Router.map(function() {
     this.route('show', {
       path: ':expense_id'
     });
+    this.route('report');
   });
 });
 
