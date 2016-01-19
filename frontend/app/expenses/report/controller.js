@@ -5,6 +5,12 @@ import Ember from 'ember';
 export default Ember.Controller.extend({
   session: Ember.inject.service(),
 
+  actions: {
+    print: function() {
+      window.print();
+    }
+  },
+
   weekStart: moment().startOf('isoWeek').startOf('day'),
   weekEnd: moment().endOf('isoWeek').endOf('day'),
 

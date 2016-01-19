@@ -7,12 +7,16 @@
   <h2><small>Week ending: {{format-date weekEnd}}</small></h2>
 </div>
 
+<p class="hidden-print">
+  <button class="btn btn-default" {{action 'print'}}>Print</button>
+</p>
+
 <p>
   <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       <strong>Total Amount</strong>
     </div>
-    <div class="col-sm-10">
+    <div class="col-sm-9">
       {{format-currency totalAmount}}
     </div>
   </div>
@@ -20,10 +24,10 @@
 
 <p>
   <div class="row">
-    <div class="col-sm-2">
+    <div class="col-sm-3">
       <strong>Average Daily Spend</strong>
     </div>
-    <div class="col-sm-10">
+    <div class="col-sm-9">
       {{format-currency dailyAverage}}
     </div>
   </div>
