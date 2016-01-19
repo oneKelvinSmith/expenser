@@ -13,5 +13,7 @@ module.exports = function(defaults) {
     }
   });
 
+  app.import(app.bowerDirectory + '/bootstrap/dist/js/bootstrap.min.js');
+
   return app.toTree();
 };
