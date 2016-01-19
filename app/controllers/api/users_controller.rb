@@ -21,7 +21,7 @@ module Api
       if @user.save
         render json: @user, status: :created
       else
-        render json: @user.errors, status: :unprocessable_entity
+        render json: errors_json, status: :unprocessable_entity
       end
     end
 
@@ -29,7 +29,7 @@ module Api
       if @user.update(user_params)
         head :no_content
       else
-        render json: @user.errors, status: :unprocessable_entity
+        render json: errors_json, status: :unprocessable_entity
       end
     end
 
@@ -46,6 +46,12 @@ module Api
     end
 
     private
+
+    def errors_json
+      {
+        errors: @user.errors
+      }
+    end
 
     def set_user
       @user = User.find(params[:id])

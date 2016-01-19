@@ -216,7 +216,7 @@ RSpec.describe 'Users', type: :request do
 
         post '/api/users', request_params, auth_headers(admin)
 
-        expect(body['email']).to eq ['Email has been taken']
+        expect(body['errors']['email']).to eq ['Email has been taken']
       end
     end
 
@@ -261,7 +261,7 @@ RSpec.describe 'Users', type: :request do
 
         put "/api/users/#{user.id}", params, auth_headers(admin)
 
-        expect(body['email']).to eq ['is invalid']
+        expect(body['errors']['email']).to eq ['is invalid']
       end
 
       it 'responds with :not_found if the record is not found' do

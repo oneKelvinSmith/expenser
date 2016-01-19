@@ -192,7 +192,7 @@ RSpec.describe 'Expenses', type: :request do
 
         post '/api/expenses', params, auth_headers(employee)
 
-        expect(body['description']).to eq ["can't be blank"]
+        expect(body['errors']['description']).to eq ["can't be blank"]
       end
     end
 
@@ -238,7 +238,7 @@ RSpec.describe 'Expenses', type: :request do
 
         put "/api/expenses/#{expense.id}", params, auth_headers(employee)
 
-        expect(body['description']).to eq ["can't be blank"]
+        expect(body['errors']['description']).to eq ["can't be blank"]
       end
 
       it 'responds with :not_found if the record is not found' do

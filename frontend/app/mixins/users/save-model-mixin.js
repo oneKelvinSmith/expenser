@@ -3,10 +3,12 @@ import Ember from 'ember';
 export default Ember.Mixin.create({
   actions: {
     save: function() {
+      const success = () => this.transitionTo('users');
+
       this
         .currentModel
         .save()
-        .then(() => this.transitionTo('users'));
+        .then(success);
     }
   },
 

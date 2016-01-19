@@ -19,7 +19,7 @@ module Api
       if @expense.save
         render json: @expense, status: :created
       else
-        render json: @expense.errors, status: :unprocessable_entity
+        render json: errors_json, status: :unprocessable_entity
       end
     end
 
@@ -27,7 +27,7 @@ module Api
       if @expense.update(expense_params)
         head :no_content
       else
-        render json: @expense.errors, status: :unprocessable_entity
+        render json: errors_json, status: :unprocessable_entity
       end
     end
 
@@ -38,6 +38,12 @@ module Api
     end
 
     private
+
+    def errors_json
+      {
+        errors: @expense.errors
+      }
+    end
 
     def user_expenses
       Expense.for_user(current_user)
