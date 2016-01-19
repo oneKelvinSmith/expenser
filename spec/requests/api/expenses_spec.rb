@@ -86,9 +86,9 @@ RSpec.describe 'Expenses', type: :request do
         expect(response).to have_http_status :ok
 
         expect(body['expenses'].count).to be 3
-        expect(body['expenses']).to eq [json(rads),
-                                        json(water),
-                                        json(stims)]
+        expect(body['expenses']).to match_array [json(rads),
+                                                 json(water),
+                                                 json(stims)]
       end
 
       it 'does not return expenses created by other users' do
